@@ -14,10 +14,11 @@ export interface Turno {
 export const useTurnoStore = defineStore('turno', () => {
   const turnos = ref([] as Turno[])
   const turnosProcess = ref([] as Turno[])
+  const filtroActivo = ref('') 
   //momentaniamente
   const turnosClient = ref([] as Turno[])
-  const socket = io('http://localhost:3000')
-  //const socket = io()
+  const socket = io()
+  //const socket = io('http://localhost:3000')
 
 
   const crearTurno = async (servicio: string, name: string) => {
@@ -35,12 +36,16 @@ export const useTurnoStore = defineStore('turno', () => {
       console.error('Error al crear turno:', error)
     }
   }
+  const aplicarFiltro = (data: Turno[]) => {
+    if (!filtroActivo.value) return data
+    return data.filter(turno => turno.servicio === filtroActivo.value)
+  }
 
   const cargarTurnos = async () => {
     try {
       const response = await fetch('/api/turnos')
       const data = await response.json()
-      turnos.value = data
+      turnos.value = aplicarFiltro(data)
     } catch (error) {
       console.error('Error al cargar turnos:', error)
     }
@@ -59,9 +64,7 @@ export const useTurnoStore = defineStore('turno', () => {
         turnosClient.value.unshift(data)
         localStorage.setItem('turnos', JSON.stringify(turnosClient.value))
         console.log("cargo estodo turnocliente");
-        
-
-      }
+         }
 
     } catch (error) {
       console.error('Error al cargar turnos:', error)
@@ -72,10 +75,16 @@ export const useTurnoStore = defineStore('turno', () => {
     try {
       const response = await fetch('/api/turnos/enProcess')
       const data = await response.json()
-      turnosProcess.value = data
+      turnosProcess.value = aplicarFiltro(data)
     } catch (error) {
       console.error('Error al cargar turnos en proceso:', error)
     }
+  }
+  //función para establecer el filtro
+  const setFiltro = (servicio: string) => {
+    filtroActivo.value = servicio
+    cargarTurnos()
+    cargarTurnosProcess()
   }
 
   const llamarTurno = (id: string) => {
@@ -123,6 +132,8 @@ export const useTurnoStore = defineStore('turno', () => {
     turnos,
     turnosProcess,
     turnosClient,
+    filtroActivo,
+    setFiltro,
     crearTurno,
     cargarTurnos,
     cargarTurnosProcess,

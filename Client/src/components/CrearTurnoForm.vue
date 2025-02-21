@@ -3,9 +3,11 @@
 
   <div class="bg-white p-6 rounded-lg shadow-md mb-6">
     <div class="mb-4">
-      <label for="servicio" class="block text-sm font-medium text-gray-700">Servicio:</label>
+      <label for="servicio" class="block text-sm font-medium text-gray-700 mb-1">Servicio:</label>
+      
       <select v-model="id" id="servicio"
         class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        <option value="">Todos los servicios</option>
         <option v-for="item in storeDesc.Desc" :value="item._id">{{ item.servicio }} - {{ item.name }}</option>
 
       </select>
@@ -58,7 +60,7 @@
           
           <button v-if="turno.estado === 'en espera'"
             @click="cancelarTurno(turno._id)"
-            class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+            class="bg-yellow-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
           >
             Cancelar
           </button> 
@@ -66,7 +68,7 @@
       </div>
 
       <!-- Mensaje cuando no hay turnos -->
-      <div v-if="!store.turnosClient.length" class="col-span-full text-center py-8 bg-gray-50 rounded-lg">
+      <div v-if="store.turnosClient.length === 0" class="col-span-full text-center py-8 bg-gray-50 rounded-lg">
         <p class="text-gray-500">No hay turnos disponibles</p>
       </div>
     </div>

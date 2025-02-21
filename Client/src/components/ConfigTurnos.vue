@@ -1,5 +1,7 @@
 <template>
-    <div class="container mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Config de Turnos</h1>
+
+    <div class="container mx-auto mb-8">
         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
             <div class="mb-4">
                 <input v-model="servicio" type="text" placeholder="Nombre del servicio"
@@ -26,7 +28,7 @@
                                 {{ item.servicio }}
                             </h3>
                             <p class="text-gray-600 mt-1">
-                                Atendido por: {{ item.name }}
+                                Nombre: {{ item.name }}
                             </p>
                         </div>
                         <button @click="DeleteDesc(item._id)"
@@ -46,14 +48,25 @@
             </div>
         </div>
     </div>
+    <div class="container mx-auto">
+        <h1 class="text-2xl font-bold mb-4">Reiniciar Turnos</h1>
+        <button @click="eliminarTodos"
+            class="bg-red-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ml-2">
+            Reiniciar
+        </button>
+    </div>
+
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useConfigStore } from '@/stores/descriptionStore'
+import { useTurnoStore } from '@/stores/turnoStore';
 
 const servicio = ref('')
 const name = ref('')
 const store = useConfigStore();
+const store2 = useTurnoStore()
+
 
 const Create = () => {
     if (servicio.value && name.value) {
@@ -67,6 +80,9 @@ const DeleteDesc = (id: string) => {
     store.DeleteConfig(id)
 }
 
+const eliminarTodos = () => {
+    store2.deleteAllTurnos()
+}
 onMounted(() => {
     store.cargarConfig()
 })
